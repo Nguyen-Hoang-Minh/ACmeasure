@@ -42,10 +42,10 @@ void updateACinfor()
 
 void setupACsensor()
 {
-  while (!(sensor.begin(&Wire, UNIT_ACMEASURE_ADDR, 32, 33, 100000UL))) {
+  while (!(sensor.begin(&Wire, UNIT_ACMEASURE_ADDR, 13, 15, 100000U))) {
     M5Dial.Lcd.clear();
-    M5Dial.Lcd.setCursor(10, 0);
-    M5Dial.Lcd.println("No Module!");
+    M5Dial.Lcd.setCursor(100, 100);
+    M5Dial.Lcd.println("no module");
   }
 }
 

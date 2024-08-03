@@ -4,29 +4,29 @@
 #include "USB.h"
 #include "USBMSC.h"
 #include "screen.h"
+#include "Ticker.h"
+#include "task.h"
 // put function declarations here:
 M5GFX display;
 M5Canvas img(&M5Dial.Display);
-bool a;
 
-void readi2c(){
-  M5Dial.Ex_I2C.getPort();
-}
+Ticker updatescreen;
+Ticker updateAC;
 void setup() {
   // put your setup code here, to run once:
   auto cfg = M5.config();
   M5Dial.begin(cfg, true, false);
   Serial.begin(115200);
-  init_screen();
-  delay(100);
   setupACsensor();
+  init_screen();
+
+  updatescreen.attach_ms(1023,taskUpdateScreen);
+  updateAC.attach_ms(211,taskUpdateACinfor);
 }
 
 
 void loop() {
   M5Dial.update();
-  update_screen();
-  delay(100);
 
   // put your main code here, to run repeatedly:
 }
