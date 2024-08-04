@@ -28,6 +28,8 @@
 #define ON_SIGNAL       1
 #define OFF_SIGNAL      0
 
+
+extern int8_t selected_relay;
 extern UNIT_4RELAY relay;
 extern bool syn_asyn_flag;
 extern bool all_flag;

@@ -6,8 +6,8 @@ bool syn_asyn_flag = SYNCHRONOUS;
 bool all_flag = false;
 uint8_t relayState = OFF_RELAY_1;
 uint8_t ALLrelayState = IDLE;
-
-bool relay_1_state = false,
+int8_t selected_relay = 0;
+bool  relay_1_state = false,
       relay_2_state = false,
       relay_3_state = false,
       relay_4_state = false;
