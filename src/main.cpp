@@ -60,7 +60,6 @@ void setup() {
   clientPublish("kienpham/feeds/topic4","0");
 
 }
-M5Dial
 void loop() {
   //put your main code here, to run repeatedly:
     if (WiFi.status() == WL_CONNECTED)

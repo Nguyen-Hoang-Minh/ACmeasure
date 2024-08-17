@@ -1,7 +1,7 @@
 #include <wifi_mqtt.h>
 
 #define MQTT_user  "kienpham"
-#define MQTT_pass  "aio_AyJV918UZAznwqdrxSWBHICOADsa"
+#define MQTT_pass  ""
 
 WiFiClient espClient;
 PubSubClient client(espClient);
