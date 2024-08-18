@@ -74,7 +74,7 @@ void update_screen(){
   M5Dial.Lcd.printf("Wifi:");
   M5Dial.Lcd.setTextSize(1);
   M5Dial.Lcd.setCursor(158, 110);
-  M5Dial.Lcd.printf(ssid);
+  M5Dial.Lcd.printf(wifi_ssid.c_str());
   if (MQTTConnectFlag==true)
   {
       M5Dial.Lcd.setTextSize(1.5);

@@ -12,8 +12,8 @@ byte* mqtt_arrived_mess;
 bool WiFiConnectFlag = false;
 bool MQTTConnectFlag = false;
 
-const char* ssid        = "ACLAB";
-const char* password    = "ACLAB2023";
+// const char* ssid        = "ACLAB";
+// const char* password    = "ACLAB2023";
 // const char* mqtt_server = "172.28.182.87";
 const char* mqtt_server = "io.adafruit.com"
 ;
@@ -28,7 +28,7 @@ void checkWiFiStatus()
   {
     WiFiConnectFlag = false;
     WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
+    WiFi.begin(wifi_ssid, wifi_pw);
   }
 }
 
