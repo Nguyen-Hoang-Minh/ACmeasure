@@ -1,10 +1,7 @@
 #include <wifi_mqtt.h>
 
-#define MQTT_user  "kienpham"
-#define MQTT_pass  "aio_yBiK166foZSkW1RSmCihnvyHbanQ"
 
-WiFiClient espClient;
-PubSubClient client(espClient);
+
 
 char* mqtt_topic_sended;
 byte* mqtt_arrived_mess;
@@ -12,8 +9,8 @@ byte* mqtt_arrived_mess;
 bool WiFiConnectFlag = false;
 bool MQTTConnectFlag = false;
 
-const char* mqtt_server = "io.adafruit.com"
-;
+
+const char* mqtt_server = "io.adafruit.com";
 
 void checkWiFiStatus()
 {
@@ -141,7 +138,7 @@ void checkConnectMQTT()
   {
     String clientID = "M5Stack-";
     clientID += String(random(0xffff), HEX);
-    bool result = client.connect(clientID.c_str(), MQTT_user, MQTT_pass);
+    bool result = client.connect(clientID.c_str(), MQTT_user.c_str(), MQTT_pass.c_str());
     if (result)
     {
       MQTTConnectFlag = true;

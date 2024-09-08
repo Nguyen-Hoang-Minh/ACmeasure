@@ -175,7 +175,7 @@ void taskClientPublish()
   temp_humi_mes += ";";
 
   counterSend ++;
-  if (counterSend == 5)
+  if (counterSend == 1)
   {
     clientPublish(ac_measure_mqtt, mes.c_str());
     mes = "";
