@@ -1,7 +1,7 @@
 #include <wifi_mqtt.h>
 
 #define MQTT_user  "kienpham"
-#define MQTT_pass  ""
+#define MQTT_pass  "aio_yBiK166foZSkW1RSmCihnvyHbanQ"
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -12,9 +12,6 @@ byte* mqtt_arrived_mess;
 bool WiFiConnectFlag = false;
 bool MQTTConnectFlag = false;
 
-const char* ssid        = "ACLAB";
-const char* password    = "ACLAB2023";
-// const char* mqtt_server = "172.28.182.87";
 const char* mqtt_server = "io.adafruit.com"
 ;
 

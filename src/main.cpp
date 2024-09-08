@@ -8,6 +8,7 @@
 #include "task.h"
 #include <WiFi.h>
 #include "temp_humi_sensor.h"
+#include "web_server.h"
 // #include "AdafruitConnect.h"
 // put function declarations here:
 M5GFX display;
@@ -26,6 +27,12 @@ void setup() {
   Wire.begin();
   //DHT.begin();
   M5Dial.Encoder.write(-1000);
+  create_web();
+
+  while(WiFi.status() != WL_CONNECTED){
+
+  }
+  delay(1000);
   setupPahub();
   setupTempHumi();
   switchChanel_2();
@@ -34,19 +41,9 @@ void setup() {
   setupRelay();
   ALLrelayState=OFF_ALL;
   controlALL();
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
   setupMQTT();
-  init_screen();
-  while (WiFi.status() != WL_CONNECTED){
-    M5Dial.Lcd.setCursor(158, 106);
-    M5Dial.Lcd.setTextSize(1);
-    M5Dial.Lcd.printf("Connecting...");
-  }
-  while(WiFiConnectFlag!=true && MQTTConnectFlag!=true){
-    checkWiFiStatus();
-    checkConnectMQTT(); 
-  }
+   init_screen();
+
   updateAC.attach_ms(211,taskUpdateACinfor);
   tickerTempHumi.attach_ms(2002,getTempandHumi);
   updatescreen.attach_ms(1023,taskUpdateScreen);

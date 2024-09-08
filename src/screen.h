@@ -3,5 +3,6 @@
 #include "control_relays.h"
 #include "wifi_mqtt.h"
 #include "temp_humi_sensor.h"
+#include "web_server.h"
 void init_screen();
 void update_screen();

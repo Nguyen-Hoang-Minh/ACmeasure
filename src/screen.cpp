@@ -74,7 +74,7 @@ void update_screen(){
   M5Dial.Lcd.printf("Wifi:");
   M5Dial.Lcd.setTextSize(1);
   M5Dial.Lcd.setCursor(158, 110);
-  M5Dial.Lcd.printf(ssid);
+  M5Dial.Lcd.print(ssid);
   if (MQTTConnectFlag==true)
   {
       M5Dial.Lcd.setTextSize(1.5);
@@ -111,7 +111,7 @@ void update_screen(){
 
 void init_screen() 
 {
-  M5Dial.Lcd.fillCircle(125,125,200,BLACK);
+  M5Dial.Lcd.fillCircle(0,0,400,BLACK);
   M5Dial.Lcd.setTextSize(1.5);
   M5Dial.Lcd.setTextColor(ORANGE);
   M5Dial.Lcd.drawString("ACMeasure", 75, 8);
