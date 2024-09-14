@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Wifi Credentials</title>
+  </head>
+  <body>
+    <div class="wapper">
+      <div class="wapper-heading">
+        <img src="./asset/M5_Dial.png" alt="Logo" />
+
+        <h1>M5 Dial</h1>
+      </div>
+      <form action='/submit' method='post'>
+        <div class="input__field">
+          <input id="SSID" type="text" name = "ssid" placeholder="Wifi SSID" />
+        </div>
+
+        <div class="input__field">
+          <input id="WifiPass" type="password" name = "password" placeholder="Password" />
+        </div>
+        <!-- <div class="input__field">
+          <input id="MQTTuser" type="text" placeholder="MQTT Username" />
+        </div>
+        <div class="input__field">
+          <input id="MQTTpass" type="password" placeholder="MQTT Password" />
+        </div> -->
+        <button class="btn btn-signup" type='submit'>Connect</button>
+      </form>
+    </div>
+    <script src="./js/signup.js"></script>
+  </body>
+</html>
