@@ -13,4 +13,8 @@ extern String MQTT_pass;
 extern WiFiClient espClient;
 extern PubSubClient client;
 
+extern bool MQTTConnectFlag;
+extern bool WiFiConnectFlag;
+
 void create_web();
+void switch_wifi_mode();

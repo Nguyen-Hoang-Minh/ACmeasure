@@ -6,6 +6,9 @@ String password = "";
 String MQTT_user = "";
 String MQTT_pass = "";
 
+bool WiFiConnectFlag = false;
+bool MQTTConnectFlag = false;
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 AsyncWebServer server(80);
@@ -33,6 +36,20 @@ bool connectMQTT(const char* MQTTuser, const char* MQTTpass){
     String clientID = "M5Stack-";
     clientID += String(random(0xffff), HEX);
     bool result = client.connect(clientID.c_str(), MQTTuser, MQTTpass);
+    int attemp=0;
+    while((result == false) && attemp <15 ){
+      result = client.connect(clientID.c_str(), MQTTuser, MQTTpass);
+      delay(300);
+      M5Dial.Lcd.setCursor(30,50+10*attemp);
+      M5Dial.Lcd.print(attemp);
+      attemp++;
+    }
+    if (result==true){
+      MQTTConnectFlag = true;
+    }
+    else{
+      MQTTConnectFlag = false;
+    }
 return result;
 }
 void create_web(){
@@ -91,13 +108,14 @@ void create_web(){
       if (connectToWiFi(ssid.c_str(), password.c_str()) == true) {
         // request->send(200, "text/html", "<html><body><h1>Connected Successfully!</h1></body></html>");
            request->send(LittleFS, "/MQTT.html", "text/html");
+           delay(100);
            server.on("/submit1", HTTP_POST, [](AsyncWebServerRequest *request) {
                 MQTT_user = request->getParam("MQTTuser", true)->value();
                 MQTT_pass = request->getParam("MQTTpass", true)->value();
-                // M5Dial.Lcd.setCursor(120,60);
-                // M5Dial.Lcd.print("id:" + MQTT_user);
-                // M5Dial.Lcd.setCursor(120,70);
-                // M5Dial.Lcd.print("pw" + MQTT_pass);
+                M5Dial.Lcd.setCursor(120,60);
+                M5Dial.Lcd.print("id:" + MQTT_user);
+                M5Dial.Lcd.setCursor(120,70);
+                M5Dial.Lcd.print("pw" + MQTT_pass);
                 if (connectMQTT(MQTT_user.c_str(), MQTT_pass.c_str()) == true) {
                     request->send(200, "text/html", "<html><body><h1>Connected Successfully!</h1></body></html>");
                 }
@@ -116,4 +134,9 @@ void create_web(){
       request->send(200, "text/html", "<html><body><h1>Missing SSID or Password. Please try again.</h1><a href='/'>Back</a></body></html>");
     }
   });
+}
+
+void switch_wifi_mode(){
+    server.end();
+    WiFi.mode(WIFI_STA);
 }

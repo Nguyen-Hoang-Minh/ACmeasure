@@ -6,8 +6,6 @@
 char* mqtt_topic_sended;
 byte* mqtt_arrived_mess;
 
-bool WiFiConnectFlag = false;
-bool MQTTConnectFlag = false;
 
 
 const char* mqtt_server = "io.adafruit.com";

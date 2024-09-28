@@ -18,8 +18,6 @@ extern const char* mqtt_server;
 extern char* mqtt_topic_sended;
 extern byte* mqtt_arrived_mess;
 
-extern bool WiFiConnectFlag;
-extern bool MQTTConnectFlag;
 
 void setupMQTT();
 void clientPublish(char* topic, const char* payload);
