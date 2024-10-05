@@ -6,8 +6,6 @@
 char* mqtt_topic_sended;
 byte* mqtt_arrived_mess;
 
-const char* id="kienpham";
-const char* key="aio_FaQB66YYXScfOoRQvMnaXbRK5JDx";
 
 const char* mqtt_server = "io.adafruit.com";
 
