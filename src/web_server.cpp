@@ -20,7 +20,7 @@ bool connectToWiFi(const char* ssid, const char* password) {
   
   int attempts = 0;
   while (WiFi.status() != WL_CONNECTED && attempts < 15) {
-    WiFi.begin(ssid, password);
+    //WiFi.begin(ssid, password);
     delay(300);
     M5Dial.Lcd.setCursor(30,50+10*attempts);
     M5Dial.Lcd.print(attempts);
@@ -28,7 +28,8 @@ bool connectToWiFi(const char* ssid, const char* password) {
   }
    M5Dial.Lcd.setCursor(50,50);
    M5Dial.Lcd.print(WiFi.status() == WL_CONNECTED);
-    M5Dial.Lcd.fillCircle(125,125,200,BLACK);
+   delay(1000);
+   M5Dial.Lcd.fillCircle(125,125,200,BLACK);
   return (WiFi.status() == WL_CONNECTED);
 }
 

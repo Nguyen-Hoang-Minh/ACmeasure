@@ -6,7 +6,8 @@
 char* mqtt_topic_sended;
 byte* mqtt_arrived_mess;
 
-
+const char* id="kienpham";
+const char* key="aio_FaQB66YYXScfOoRQvMnaXbRK5JDx";
 
 const char* mqtt_server = "io.adafruit.com";
 
@@ -32,6 +33,16 @@ void callback(char* topic, byte* payload, unsigned int length) {
   //   M5.Lcd.print((char)payload[i]);
   // }
   // M5.Lcd.println();
+
+  // Serial.println("Message arrived [");
+  // Serial.println(topic);
+  // Serial.println("] ");
+  // for (int i = 0; i < length; i++) {
+  //   Serial.println((char)payload[i]);
+  // }
+  // Serial.println();
+
+
 
   char message[5] = "0000";
 
@@ -98,36 +109,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
       relay.relayWrite(RELAY_4, OFF_SIGNAL);
     }
   }
-  if (topic[20] == '0')
-  {
-    if ((char)payload[0] == '1')
-    {
-      ALLrelayState = ON_ALL;
-      switchChanel_3();
-      controlALL();
-    }
-    else 
-    {
-      ALLrelayState = OFF_ALL;
-      switchChanel_3();
-      controlALL();
-    }
-  }
-
-  Serial.println(topic);
-  Serial.println((char)payload[0]);
-  if (topic[5] == '6')
-  {
-    if ((char)payload[0] == 'S')
-    {
-      if (relay_1_state) message[0] = '1';
-      if (relay_2_state) message[1] = '1';
-      if (relay_3_state) message[2] = '1';
-      if (relay_4_state) message[3] = '1';
-      client.publish("topic6", message);
-    }
-  }
-
 }
 
 void checkConnectMQTT()
@@ -137,6 +118,7 @@ void checkConnectMQTT()
     String clientID = "M5Stack-";
     clientID += String(random(0xffff), HEX);
     bool result = client.connect(clientID.c_str(), MQTT_user.c_str(), MQTT_pass.c_str());
+    result=true;
     if (result)
     {
       MQTTConnectFlag = true;
@@ -147,7 +129,7 @@ void checkConnectMQTT()
       client.subscribe(relay2_mqtt);
       client.subscribe(relay3_mqtt);
       client.subscribe(relay4_mqtt);
-      client.subscribe(temp);
+      client.subscribe(ac_measure_mqtt);
     }
     else
     {
@@ -156,6 +138,16 @@ void checkConnectMQTT()
   }
 }
 
+void subcribeMQTT(){
+      client.publish(check_wifi, "hello world11");
+      client.subscribe(check_wifi);
+      client.subscribe(temp_humi_mqtt);
+      client.subscribe(relay1_mqtt);
+      client.subscribe(relay2_mqtt);
+      client.subscribe(relay3_mqtt);
+      client.subscribe(relay4_mqtt);
+      client.subscribe(ac_measure_mqtt);
+}
 void setupMQTT() 
 {
   client.setServer(mqtt_server, 1883);  // Sets the server details.  

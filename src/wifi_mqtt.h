@@ -24,3 +24,4 @@ void clientPublish(char* topic, const char* payload);
 void clientLoop();
 void checkWiFiStatus();
 void checkConnectMQTT();
+void subcribeMQTT();
