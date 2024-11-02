@@ -4,6 +4,8 @@
 #include <WiFi.h>
 #include <String.h>
 #include <PubSubClient.h>
+#include <DNSServer.h>
+
 extern String ssid;
 extern String password;
 
@@ -18,3 +20,5 @@ extern bool WiFiConnectFlag;
 
 void create_web();
 void switch_wifi_mode();
+void handleDNSRequests();
+void turn_off_dns();

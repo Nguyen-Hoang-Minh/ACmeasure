@@ -1,0 +1,106 @@
+#include <M5Dial.h>
+//#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
+#include <DNSServer.h>
+#include <LittleFS.h>
+
+// Web server on port 80
+AsyncWebServer server(80);
+
+// DNS server for captive portal
+DNSServer dnsServer;
+
+const byte DNS_PORT = 53; // Standard DNS port
+
+// Variables for Wi-Fi credentials
+String wifiSSID;
+String wifiPassword;
+bool connectingToWiFi = false;
+unsigned long connectStartTime = 0;
+const unsigned long wifiConnectTimeout = 10000; // 10 seconds
+
+void setup() {
+  M5.begin();
+  Serial.begin(115200);
+
+  // Initialize LittleFS
+  if (!LittleFS.begin()) {
+    Serial.println("An error occurred while mounting LittleFS");
+    return;
+  }
+
+  // Start Wi-Fi in AP mode with SSID "M5Dial_Config"
+  WiFi.softAP("M5Dial_Config", "12345678");
+  
+  // Print AP IP address
+  Serial.print("AP IP address: ");
+  Serial.println(WiFi.softAPIP());
+
+  // Setup the DNS server to redirect all requests to the AP IP (captive portal)
+  dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
+
+  // Serve the main Wi-Fi configuration page
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String html = "<html><head><link rel='stylesheet' href='/style.css'></head><body>";
+    html += "<h1>Configure Wi-Fi</h1>";
+    html += "<form action='/submit' method='post'>";
+    html += "SSID: <input type='text' name='ssid'><br>";
+    html += "Password: <input type='password' name='password'><br>";
+    html += "<input type='submit' value='Connect'>";
+    html += "</form>";
+    html += "</body></html>";
+    request->send(200, "text/html", html);
+  });
+
+  // Handle form submission for Wi-Fi credentials
+  server.on("/submit", HTTP_POST, [](AsyncWebServerRequest *request) {
+    if (request->hasParam("ssid", true) && request->hasParam("password", true)) {
+      wifiSSID = request->getParam("ssid", true)->value();
+      wifiPassword = request->getParam("password", true)->value();
+
+      // Start Wi-Fi connection process
+      WiFi.begin(wifiSSID.c_str(), wifiPassword.c_str());
+      connectingToWiFi = true;
+      connectStartTime = millis();
+
+      // Send response indicating the connection attempt
+      request->send(200, "text/html", "<html><body><h1>Connecting to Wi-Fi...</h1><p>Please wait...</p></body></html>");
+    } else {
+      request->send(200, "text/html", "<html><body><h1>Missing SSID or Password. Try again.</h1><a href='/'>Back</a></body></html>");
+    }
+  });
+
+  // Start the web server
+  server.begin();
+}
+
+void loop() {
+  M5.update();
+
+  // Handle captive portal DNS redirection
+  dnsServer.processNextRequest();
+
+  // Handle Wi-Fi connection process
+  if (connectingToWiFi) {
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("Connected to Wi-Fi!");
+      connectingToWiFi = false;
+
+      // Stop AP mode
+      WiFi.softAPdisconnect(true);
+      server.end();
+
+      // Print station IP address
+      Serial.print("Station IP address: ");
+      Serial.println(WiFi.localIP());
+
+    } else if (millis() - connectStartTime > wifiConnectTimeout) {
+      Serial.println("Failed to connect to Wi-Fi.");
+      connectingToWiFi = false;
+
+      // Restart AP mode and allow retry if connection fails
+      WiFi.softAP("M5Dial_Config", "12345678");
+      server.begin();
+    }
+  }
+}

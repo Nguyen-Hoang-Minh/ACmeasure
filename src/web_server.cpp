@@ -12,6 +12,7 @@ bool MQTTConnectFlag = false;
 WiFiClient espClient;
 PubSubClient client(espClient);
 AsyncWebServer server(80);
+DNSServer dnsServer;
 
 bool connectToWiFi(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
@@ -53,6 +54,27 @@ bool connectMQTT(const char* MQTTuser, const char* MQTTpass){
     }
 return result;
 }
+
+class CaptivePortalHandler : public AsyncWebHandler {
+public:
+  bool canHandle(AsyncWebServerRequest *request) override {
+    return request->url() == "/";
+  }
+
+  void handleRequest(AsyncWebServerRequest *request) override {
+    request->send(LittleFS, "/index.html", "text/html");
+  }
+};
+
+void setupServer(){
+  server.addHandler(new CaptivePortalHandler()).setFilter(ON_AP_FILTER);
+
+  server.onNotFound([&](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/index.html", "text/html"); 
+  });
+}
+
+
 void create_web(){
     if (!LittleFS.begin()) {
     Serial.println("An error has occurred while mounting LittleFS");
@@ -67,6 +89,11 @@ void create_web(){
   Serial.println(WiFi.softAPIP());
   server.begin();
 
+  //serve DNS server
+  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer.setTTL(300);
+  dnsServer.start(53, "*", WiFi.softAPIP());
+  setupServer();
 
   // Serve the CSS file
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -136,7 +163,14 @@ void create_web(){
     }
   });
 }
+void handleDNSRequests() {
+    dnsServer.processNextRequest();
+}
 
+void turn_off_dns(){
+  dnsServer.stop();
+  Serial.println("DNS server stopped");
+}
 void switch_wifi_mode(){
     server.end();
     WiFi.mode(WIFI_STA);

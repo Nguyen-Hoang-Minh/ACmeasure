@@ -30,9 +30,12 @@ void setup() {
   setupMQTT();  //setup MQTT server and callback function. Must be defined before connect
   create_web(); //function create web server
   
-  while((WiFi.status() != WL_CONNECTED) || (MQTTConnectFlag == false)){}  //loop wait until connect wifi and mqtt
+  while((WiFi.status() != WL_CONNECTED) || (MQTTConnectFlag == false)){
+    handleDNSRequests();
+    delay(100);
+  }  //loop wait until connect wifi and mqtt
   delay(1000);
-
+  turn_off_dns();
   switch_wifi_mode();   //turn off M5 dial access point and close web server
   subcribeMQTT();       //subcribe to topics
   setupPahub();
@@ -54,7 +57,7 @@ void setup() {
   tickerTempHumi.attach_ms(2002,getTempandHumi);
   updatescreen.attach_ms(1023,taskUpdateScreen);
   tickercontrolRelay.attach_ms(53,taskControlRelay);
-  tickerMQTTpublish.attach_ms(5001, taskClientPublish);
+  tickerMQTTpublish.attach_ms(60001, taskClientPublish);
 
   clientPublish("kienpham/feeds/topic0","0");
   clientPublish("kienpham/feeds/topic1","0");
