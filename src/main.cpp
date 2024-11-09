@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <LittleFS.h>
 #include "M5Dial.h"
 #include <HWCDC.h>
 #include "USB.h"
@@ -26,6 +27,23 @@ void setup() {
   Wire.begin();
   //DHT.begin();
   M5Dial.Encoder.write(-1000);
+  display.begin();
+  
+  if (!LittleFS.begin()) {
+        Serial.println("LittleFS mount failed");
+    } else {
+        Serial.println("LittleFS mounted successfully");
+    }
+
+    if (!LittleFS.exists("/qrcode.bmp")) {
+        Serial.println("File not found");
+    } else {
+        Serial.println("File found");
+    }
+  
+  bool result = display.drawBmpFile(LittleFS, "/qrcode.bmp", 30, 30, 150, 150);
+    M5Dial.Lcd.setCursor(160, 160);
+    M5Dial.Lcd.print(result ? "Display Success" : "Display Failed");
 
   setupMQTT();  //setup MQTT server and callback function. Must be defined before connect
   create_web(); //function create web server
