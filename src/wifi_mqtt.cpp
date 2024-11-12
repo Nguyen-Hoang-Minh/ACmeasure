@@ -7,6 +7,14 @@ char* mqtt_topic_sended;
 byte* mqtt_arrived_mess;
 
 
+char* check_wifi; 
+char* temp_humi_mqtt;
+char* relay1_mqtt; 
+char* relay2_mqtt; 
+char* relay3_mqtt; 
+char* relay4_mqtt; 
+char* ac_measure_mqtt;
+char* temp; 
 const char* mqtt_server = "io.adafruit.com";
 
 void checkWiFiStatus()
@@ -119,6 +127,7 @@ void checkConnectMQTT()
     result=true;
     if (result)
     {
+
       MQTTConnectFlag = true;
       client.publish(check_wifi, "hello world11");
       client.subscribe(check_wifi);
@@ -137,6 +146,14 @@ void checkConnectMQTT()
 }
 
 void subcribeMQTT(){
+    check_wifi = strdup((MQTT_user + "/feeds/m5stack").c_str());
+    temp_humi_mqtt = strdup((MQTT_user + "/feeds/topic0").c_str());
+    relay1_mqtt = strdup((MQTT_user + "/feeds/topic1").c_str());
+    relay2_mqtt = strdup((MQTT_user + "/feeds/topic2").c_str());
+    relay3_mqtt = strdup((MQTT_user + "/feeds/topic3").c_str());
+    relay4_mqtt = strdup((MQTT_user + "/feeds/topic4").c_str());
+    ac_measure_mqtt = strdup((MQTT_user + "/feeds/topic5").c_str());
+    temp = strdup((MQTT_user + "/feeds/topic6").c_str());
       client.publish(check_wifi, "hello world11");
       client.subscribe(check_wifi);
       client.subscribe(temp_humi_mqtt);

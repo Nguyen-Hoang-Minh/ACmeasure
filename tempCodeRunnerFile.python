@@ -1,0 +1,3 @@
+image = "D:\Final_Project1\NewAC\ACmeasure\src\qr-code.png"
+
+data = [image.getpixel((x, y)) for x in range(image.width) for y in range(image.height)]

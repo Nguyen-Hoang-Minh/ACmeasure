@@ -4,14 +4,24 @@
 #include <pahub.h>
 #include "web_server.h"
 
-#define check_wifi "kienpham/feeds/m5stack"
-#define temp_humi_mqtt "kienpham/feeds/topic0"
-#define relay1_mqtt "kienpham/feeds/topic1"
-#define relay2_mqtt "kienpham/feeds/topic2"
-#define relay3_mqtt "kienpham/feeds/topic3"
-#define relay4_mqtt "kienpham/feeds/topic4"
-#define ac_measure_mqtt "kienpham/feeds/topic5"
-#define temp "kienpham/feeds/topic6"
+// #define check_wifi "kienpham/feeds/m5stack"
+// #define temp_humi_mqtt "kienpham/feeds/topic0"
+// #define relay1_mqtt "kienpham/feeds/topic1"
+// #define relay2_mqtt "kienpham/feeds/topic2"
+// #define relay3_mqtt "kienpham/feeds/topic3"
+// #define relay4_mqtt "kienpham/feeds/topic4"
+// #define ac_measure_mqtt "kienpham/feeds/topic5"
+// #define temp "kienpham/feeds/topic6"
+
+
+extern char* check_wifi; 
+extern char* temp_humi_mqtt;
+extern char* relay1_mqtt; 
+extern char* relay2_mqtt; 
+extern char* relay3_mqtt; 
+extern char* relay4_mqtt; 
+extern char* ac_measure_mqtt;
+extern char* temp; 
 
 extern const char* mqtt_server;
 
