@@ -10,7 +10,7 @@
 #include <WiFi.h>
 #include "temp_humi_sensor.h"
 #include "web_server.h"
-// #include "AdafruitConnect.h"
+
 // put function declarations here:
 M5GFX display;
 M5Canvas img(&M5Dial.Display);
@@ -20,15 +20,19 @@ Ticker updateAC;
 Ticker tickercontrolRelay;
 Ticker tickerMQTTpublish;
 Ticker tickerTempHumi;
-void setup() {
+
+void setup()
+{
   auto cfg = M5.config();
   M5Dial.begin(cfg, true, false);
   Serial.begin(115200);
-  Wire.begin();
-  //DHT.begin();
+  Serial.println(__FILE__);
+  Serial.println("DHT20 LIBRARY VERSION: ");
+  Serial.println(DHT20_LIB_VERSION);
+  Serial.println();
   M5Dial.Encoder.write(-1000);
   display.begin();
-  
+  Wire.begin();
   if (!LittleFS.begin()) {
         Serial.println("LittleFS mount failed");
     } else {
@@ -57,15 +61,15 @@ void setup() {
   switch_wifi_mode();   //turn off M5 dial access point and close web server
   subcribeMQTT();       //subcribe to topics
   setupPahub();
-  delay(100);
+  // delay(100);
   setupTempHumi();
-  delay(100);
+  // delay(100);
   switchChanel_2();
   setupACsensor();
-  delay(100);
+  // delay(100);
   switchChanel_3();
   setupRelay();
-  delay(100);
+  // delay(100);
   ALLrelayState=OFF_ALL;
   controlALL();
   
@@ -82,10 +86,11 @@ void setup() {
   clientPublish("kienpham/feeds/topic2","0");
   clientPublish("kienpham/feeds/topic3","0");
   clientPublish("kienpham/feeds/topic4","0");
-
 }
-void loop() {
-  //put your main code here, to run repeatedly:
+
+void loop()
+{
+//put your main code here, to run repeatedly:
     if (WiFi.status() == WL_CONNECTED)
   {
     checkWiFiStatus();

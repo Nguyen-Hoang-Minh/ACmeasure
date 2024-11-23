@@ -20,7 +20,7 @@ bool connectToWiFi(const char* ssid, const char* password) {
   M5Dial.Lcd.print("Connecting to Wi-Fi...");
   
   int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 15) {
+  while (WiFi.status() != WL_CONNECTED && attempts < 14) {
     //WiFi.begin(ssid, password);
     delay(300);
     M5Dial.Lcd.setCursor(30,50+10*attempts);
