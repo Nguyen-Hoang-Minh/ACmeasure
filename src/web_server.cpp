@@ -105,6 +105,9 @@ void create_web(){
   server.on("/asset/M5_Dial.png", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/asset/M5_Dial.png", "image/png");
   });
+  server.on("/asset/logoBK.png", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/asset/logoBK.png", "image/png");
+  });
   server.on("/asset/LostConnect.png", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/asset/LostConnect.png", "image/png");
   });
@@ -117,6 +120,13 @@ void create_web(){
   server.on("/asset/MQTTbackground.jpg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/asset/MQTTbackground.jpg", "image/jpg");
   });
+  server.on("/asset/success_background.jpg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/asset/success_background.jpg", "image/jpg");
+  });
+  server.on("/asset/check_mark.png", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/asset/check_mark.png", "check_mark/png");
+  });
+
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(LittleFS, "/index.html", "text/html");
@@ -145,7 +155,7 @@ void create_web(){
                 M5Dial.Lcd.setCursor(120,70);
                 M5Dial.Lcd.print("pw" + MQTT_pass);
                 if (connectMQTT(MQTT_user.c_str(), MQTT_pass.c_str()) == true) {
-                    request->send(200, "text/html", "<html><body><h1>Connected Successfully!</h1></body></html>");
+                     request->send(LittleFS, "/SuccessPage.html", "text/html");
                 }
                 else{
                     request->send(200, "text/html", "<html><body><h1>Failed to Connect. Please try again.</h1><a href='/'>Back</a></body></html>");

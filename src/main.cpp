@@ -45,9 +45,7 @@ void setup()
         Serial.println("File found");
     }
   
-  bool result = display.drawBmpFile(LittleFS, "/qrcode.bmp", 30, 30, 150, 150);
-    M5Dial.Lcd.setCursor(160, 160);
-    M5Dial.Lcd.print(result ? "Display Success" : "Display Failed");
+  bool result = display.drawBmpFile(LittleFS, "/qrcode.bmp", 45, 45, 150, 150);
 
   setupMQTT();  //setup MQTT server and callback function. Must be defined before connect
   create_web(); //function create web server
