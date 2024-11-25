@@ -1,5 +1,7 @@
 #include "task.h"
 
+#define MAX_MEASUREMENT 150
+#define DETECT_THRESHOLD 20.0
 void taskUpdateScreen(){
     update_screen();
 }
@@ -158,30 +160,73 @@ uint8_t counterSend = 0;
 String mes;
 String temp_humi_mes;
 
+float mahal;
+float measurement[MAX_MEASUREMENT];
+float mad[3];
+float threshold = DETECT_THRESHOLD;
+bool abnormal_flag = false;
+float mean_temp = 0;
+float mean_humi = 0;
+float mean_hi = 0;
+
 void taskClientPublish()
 {
-  mes += String(vol_str);
-  mes += ",";
-  mes += String(cur_str);
-  mes += ",";
-  mes += String(pow_str);
-  mes += ",";
-  mes += String(appow_str);
-  mes += ",";
+    mes += String(vol_str);
+    mes += ",";
+    mes += String(cur_str);
+    mes += ",";
+    mes += String(pow_str);
+    mes += ",";
+    mes += String(appow_str);
+    mes += ",";
 
-  temp_humi_mes += String(temperature);
-  temp_humi_mes += ",";
-  temp_humi_mes += String(humidity);
-  temp_humi_mes += ";";
+    if(mutex_lock == false){
+        mutex_lock = true;
 
-  counterSend ++;
-  if (counterSend == 1)
-  {
-    clientPublish(ac_measure_mqtt, mes.c_str());
-    mes = "";
-    clientPublish(temp_humi_mqtt,temp_humi_mes.c_str());
-    temp_humi_mes = "";
-    counterSend = 0;
-  }
+        for(int axis = 0; axis < 3; axis++){
+            for(int i = 0; i < MAX_MEASUREMENT; i++){
+                measurement[i] = data_samples[i][axis];
+            }
+            mad[axis] = calc_mad(measurement, MAX_MEASUREMENT);
+            if(axis==0){
+                mean_temp = mean(measurement, MAX_MEASUREMENT);
+            }
+            else if(axis == 1){
+                mean_humi = mean(measurement, MAX_MEASUREMENT);
+            }
+            else if(axis == 2){
+                mean_hi = mean(measurement, MAX_MEASUREMENT);
+            }
+        }
+
+        mahal = mahalanobis(mad, model_mu, *model_inv_cov, model_mu_dim1);
+
+        if(mahal > threshold){
+            abnormal_flag = true;
+        }
+        else{
+            abnormal_flag = false;
+        }
+
+        sample_index = 0;
+        mutex_lock = false;
+    }
+        
+        temp_humi_mes += String(mean_temp);
+        temp_humi_mes += ",";
+        temp_humi_mes += String(mean_humi);
+        temp_humi_mes += ";";
+        temp_humi_mes += String(mean_hi);
+        temp_humi_mes += ",";
+        temp_humi_mes += String(abnormal_flag);
+
+        mean_temp = 0;
+        mean_humi = 0;
+        mean_hi = 0;
+
+        clientPublish(ac_measure_mqtt, mes.c_str());
+        mes = "";
+        clientPublish(temp_humi_mqtt,temp_humi_mes.c_str());
+        temp_humi_mes = "";
 }
 

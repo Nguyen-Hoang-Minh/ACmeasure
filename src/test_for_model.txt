@@ -1,0 +1,108 @@
+#include <Arduino.h>
+#include "M5Dial.h"
+#include "MAHO_model_c.h"
+#include "anomaly_sample_data_test.h"
+#include "normal_sample_data_test.h"
+#include "utils.h"
+
+// put function declarations here:
+M5GFX display;
+M5Canvas img(&M5Dial.Display);
+
+constexpr int MAX_MEASUREMENT = 200;
+
+void setup()
+{
+  auto cfg = M5.config();
+  M5Dial.begin(cfg, true, false);
+  Serial.begin(115200);
+  M5Dial.Encoder.write(-1000);
+  display.begin();
+  
+  float mahal;
+  float measurement[MAX_MEASUREMENT];
+  float mad[normal_sample_dim2];
+  unsigned long time_start;
+  unsigned long time_end;
+
+  Serial.println("Mahalanobis Distance test");
+  Serial.println();
+  Serial.println("---Normal sample---");
+
+  time_start = micros();
+
+  for(int axis = 0; axis < normal_sample_dim2; axis++){
+    for(int i = 0; i < MAX_MEASUREMENT; i++){
+      measurement[i] = normal_sample[i][axis];
+    }
+    mad[axis] = calc_mad(measurement, MAX_MEASUREMENT);
+  }
+
+  time_end = micros();
+
+   // Print out MAD calculations
+  Serial.println("MAD: ");
+  for (int axis = 0; axis < normal_sample_dim2; axis++) {
+    Serial.println(mad[axis], 7);
+    Serial.println(" ");
+  }
+  Serial.println();
+  Serial.println("Time to compute MAD: ");
+  Serial.println(time_end - time_start);
+  Serial.println(" us");
+
+  // Calculate Mahalanobis distance of normal sample
+  time_start = micros();
+  mahal = mahalanobis(mad, model_mu, *model_inv_cov, model_mu_dim1);
+  time_end = micros();
+  Serial.println("Mahalanobis distance: ");
+  Serial.println(mahal, 7);
+  Serial.println("Time to compute MD: ");
+  Serial.println(time_end - time_start);
+  Serial.println(" us");
+
+  // Repeat the process for the anomaly sample
+  Serial.println();
+  Serial.println("---Anomaly Sample---");
+
+  // For timing
+  time_start = micros();
+
+  // For each axis, compute the MAD (scale up by 1.4826)
+  for (int axis = 0; axis < anomaly_sample_data_test_dim2; axis++) {
+    for (int i = 0; i < MAX_MEASUREMENT; i++) {
+      measurement[i] = anomaly_sample_data_test[i][axis];
+    }
+    mad[axis] = calc_mad(measurement, MAX_MEASUREMENT);
+  }
+
+  // For timing
+  time_end = micros();
+
+  // Print out MAD calculations
+  Serial.println("MAD: ");
+  for (int axis = 0; axis < normal_sample_dim2; axis++) {
+    Serial.println(mad[axis], 7);
+    Serial.println(" ");
+  }
+  Serial.println();
+  Serial.println("Time to compute MAD: ");
+  Serial.println(time_end - time_start);
+  Serial.println(" us");
+
+  // Calculate Mahalanobis distance of normal sample
+  time_start = micros();
+  mahal = mahalanobis(mad, model_mu, *model_inv_cov, model_mu_dim1);
+  time_end = micros();
+  Serial.println("Mahalanobis distance: ");
+  Serial.println(mahal, 7);
+  Serial.println("Time to compute MD: ");
+  Serial.println(time_end - time_start);
+  Serial.println(" us");
+}
+
+
+void loop()
+{
+
+}
