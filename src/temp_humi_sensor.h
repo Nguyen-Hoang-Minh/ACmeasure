@@ -3,6 +3,7 @@
 #include "pahub.h"
 #include "utils.h"
 
+
 #define MAX_SAMPLES 250
 extern float temperature;
 extern float humidity;

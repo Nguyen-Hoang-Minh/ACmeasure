@@ -45,9 +45,7 @@ void setup()
         Serial.println("File found");
     }
   
-  bool result = display.drawBmpFile(LittleFS, "/qrcode.bmp", 30, 30, 150, 150);
-    M5Dial.Lcd.setCursor(160, 160);
-    M5Dial.Lcd.print(result ? "Display Success" : "Display Failed");
+  bool result = display.drawBmpFile(LittleFS, "/qrcode.bmp", 45, 45, 150, 150);
 
   setupMQTT();  //setup MQTT server and callback function. Must be defined before connect
   create_web(); //function create web server
@@ -79,13 +77,26 @@ void setup()
   tickerTempHumi.attach_ms(2002,getTempandHumi);
   updatescreen.attach_ms(1023,taskUpdateScreen);
   tickercontrolRelay.attach_ms(53,taskControlRelay);
-  tickerMQTTpublish.attach_ms(60001, taskClientPublish);
+  tickerMQTTpublish.attach_ms(300001, taskClientPublish);
 
-  clientPublish("kienpham/feeds/topic0","0");
+  env.begin("environment", false);
+  String first_message;
+  first_message += env.getString("mean_temp", "-99");
+  first_message += ",";
+  first_message += env.getString("mean_humi", "-99");
+  first_message += ",";
+  first_message += env.getString("mean_hi", "-99");
+  first_message += ",";
+  first_message += env.getString("abnormal_flag", "-99");
+  first_message += ",";
+  first_message += env.putString("mahal", "1");
+
+  clientPublish("kienpham/feeds/topic0", first_message.c_str());
   clientPublish("kienpham/feeds/topic1","0");
   clientPublish("kienpham/feeds/topic2","0");
   clientPublish("kienpham/feeds/topic3","0");
   clientPublish("kienpham/feeds/topic4","0");
+  clientPublish("kienpham/feeds/topic5","0,0,0,0,");
 }
 
 void loop()

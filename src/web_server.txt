@@ -20,9 +20,9 @@ bool connectToWiFi(const char* ssid, const char* password) {
   M5Dial.Lcd.print("Connecting to Wi-Fi...");
   
   int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 14) {
+  while (WiFi.status() != WL_CONNECTED && attempts < 15) {
     //WiFi.begin(ssid, password);
-    delay(200);
+    delay(300);
     M5Dial.Lcd.setCursor(30,50+10*attempts);
     M5Dial.Lcd.print(attempts);
     attempts++;
@@ -41,7 +41,7 @@ bool connectMQTT(const char* MQTTuser, const char* MQTTpass){
     int attemp=0;
     while((result == false) && attemp <15 ){
       result = client.connect(clientID.c_str(), MQTTuser, MQTTpass);
-      delay(200);
+      delay(300);
       M5Dial.Lcd.setCursor(30,50+10*attemp);
       M5Dial.Lcd.print(attemp);
       attemp++;
@@ -105,9 +105,6 @@ void create_web(){
   server.on("/asset/M5_Dial.png", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/asset/M5_Dial.png", "image/png");
   });
-  server.on("/asset/logoBK.png", HTTP_GET, [](AsyncWebServerRequest *request) {
-     request->send(LittleFS, "/asset/logoBK.png", "image/png");
-  });
   server.on("/asset/LostConnect.png", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/asset/LostConnect.png", "image/png");
   });
@@ -120,13 +117,6 @@ void create_web(){
   server.on("/asset/MQTTbackground.jpg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/asset/MQTTbackground.jpg", "image/jpg");
   });
-  server.on("/asset/success_background.jpg", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(LittleFS, "/asset/success_background.jpg", "image/jpg");
-  });
-  server.on("/asset/check_mark.png", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(LittleFS, "/asset/check_mark.png", "check_mark/png");
-  });
-
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(LittleFS, "/index.html", "text/html");
@@ -150,12 +140,12 @@ void create_web(){
            server.on("/submit1", HTTP_POST, [](AsyncWebServerRequest *request) {
                 MQTT_user = request->getParam("MQTTuser", true)->value();
                 MQTT_pass = request->getParam("MQTTpass", true)->value();
-                M5Dial.Lcd.setCursor(40,60);
+                M5Dial.Lcd.setCursor(120,60);
                 M5Dial.Lcd.print("id:" + MQTT_user);
-                M5Dial.Lcd.setCursor(40,70);
+                M5Dial.Lcd.setCursor(120,70);
                 M5Dial.Lcd.print("pw" + MQTT_pass);
                 if (connectMQTT(MQTT_user.c_str(), MQTT_pass.c_str()) == true) {
-                     request->send(LittleFS, "/SuccessPage.html", "text/html");
+                    request->send(200, "text/html", "<html><body><h1>Connected Successfully!</h1></body></html>");
                 }
                 else{
                     request->send(200, "text/html", "<html><body><h1>Failed to Connect. Please try again.</h1><a href='/'>Back</a></body></html>");

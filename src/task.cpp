@@ -2,6 +2,7 @@
 
 #define MAX_MEASUREMENT 150
 #define DETECT_THRESHOLD 20.0
+
 void taskUpdateScreen(){
     update_screen();
 }
@@ -160,6 +161,8 @@ uint8_t counterSend = 0;
 String mes;
 String temp_humi_mes;
 
+Preferences env;
+
 float mahal;
 float measurement[MAX_MEASUREMENT];
 float mad[3];
@@ -182,25 +185,35 @@ void taskClientPublish()
 
     if(mutex_lock == false){
         mutex_lock = true;
-
+        Serial.println("current index:");
+        Serial.println(sample_index);
+        delay(10);
         for(int axis = 0; axis < 3; axis++){
-            for(int i = 0; i < MAX_MEASUREMENT; i++){
+            Serial.println("Feature");
+            for(int i = 0; i < sample_index; i++){   //consider using sample_index instead of MAX_MEASUREMENT
                 measurement[i] = data_samples[i][axis];
+                // Serial.println(measurement[i]);
+                // delay(5);
+                // Serial.println("index");
+                // Serial.println(sample_index);
+                // delay(5);
             }
-            mad[axis] = calc_mad(measurement, MAX_MEASUREMENT);
             if(axis==0){
-                mean_temp = mean(measurement, MAX_MEASUREMENT);
+                mean_temp = mean(measurement, sample_index);//consider using sample_index instead of MAX_MEASUREMENT
             }
             else if(axis == 1){
-                mean_humi = mean(measurement, MAX_MEASUREMENT);
+                mean_humi = mean(measurement, sample_index);//consider using sample_index instead of MAX_MEASUREMENT
             }
             else if(axis == 2){
-                mean_hi = mean(measurement, MAX_MEASUREMENT);
+                mean_hi = mean(measurement, sample_index);//consider using sample_index instead of MAX_MEASUREMENT
             }
+            mad[axis] = calc_mad(measurement, sample_index);//consider using sample_index instead of MAX_MEASUREMENT
         }
 
         mahal = mahalanobis(mad, model_mu, *model_inv_cov, model_mu_dim1);
-
+        Serial.println("mahalanobis distance: ");
+        delay(10);
+        Serial.println(mahal);
         if(mahal > threshold){
             abnormal_flag = true;
         }
@@ -208,17 +221,21 @@ void taskClientPublish()
             abnormal_flag = false;
         }
 
-        sample_index = 0;
-        mutex_lock = false;
-    }
-        
         temp_humi_mes += String(mean_temp);
         temp_humi_mes += ",";
         temp_humi_mes += String(mean_humi);
-        temp_humi_mes += ";";
+        temp_humi_mes += ",";
         temp_humi_mes += String(mean_hi);
         temp_humi_mes += ",";
         temp_humi_mes += String(abnormal_flag);
+        temp_humi_mes += ",";
+        temp_humi_mes += String(mahal);
+
+        env.putString("mean_temp", String(mean_temp));
+        env.putString("mean_humi", String(mean_humi));
+        env.putString("mean_hi", String(mean_hi));
+        env.putString("abnormal_flag", String(abnormal_flag));
+        env.putString("mahal", String(mahal));
 
         mean_temp = 0;
         mean_humi = 0;
@@ -228,5 +245,10 @@ void taskClientPublish()
         mes = "";
         clientPublish(temp_humi_mqtt,temp_humi_mes.c_str());
         temp_humi_mes = "";
+        
+        sample_index = 0;
+        mutex_lock = false; 
+    }
+        
 }
 

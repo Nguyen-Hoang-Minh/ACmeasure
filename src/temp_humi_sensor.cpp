@@ -7,6 +7,8 @@ float data_samples[MAX_SAMPLES][3];
 int sample_index = 0;
 bool mutex_lock = false;
 
+
+
 void setupTempHumi(){
     DHT.begin();
 }
@@ -44,14 +46,17 @@ void getTempandHumi(){
   //  DISPLAY DATA, sensor has only one decimal.
   humidity=DHT.getHumidity();
   temperature=DHT.getTemperature();
-  Serial.println(temperature);
-  Serial.println(humidity);
+  
 
-  if(mutex_lock == false){
+  if(mutex_lock == false){        //error might be come from this condition
     mutex_lock = true;
+    //if(temperature!=0 && humidity!=0){}
     data_samples[sample_index%MAX_SAMPLES][0] = temperature;
     data_samples[sample_index%MAX_SAMPLES][1] = humidity;
     data_samples[sample_index%MAX_SAMPLES][2] = fareheit_to_celcius(heat_index(temperature, humidity));
+    // Serial.println(temperature);
+    // Serial.println(humidity); 
+    // Serial.println(fareheit_to_celcius(heat_index(temperature, humidity)));
     sample_index++;
     mutex_lock = false;
   }
